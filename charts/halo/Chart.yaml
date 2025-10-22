@@ -15,15 +15,15 @@ sources:
   - https://github.com/halo-dev/halo
 dependencies:
   - name: common
-    repository: https://charts.bitnami.com/bitnami
+    repository: oci://registry-1.docker.io/bitnamicharts
     tags:
       - bitnami-common
     version: 2.x.x
   - name: postgresql
-    repository: https://charts.bitnami.com/bitnami
+    repository: oci://registry-1.docker.io/bitnamicharts
     version: 12.x.x
     condition: postgresql.enabled
   - name: mysql
-    repository: https://charts.bitnami.com/bitnami
+    repository: oci://registry-1.docker.io/bitnamicharts
     version: 9.x.x
     condition: mysql.enabled

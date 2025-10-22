@@ -9,6 +9,11 @@
 ## @param global.storageClass Global StorageClass for Persistent Volume(s)
 ##
 global:
+
+  # To override bitnami images
+  security:
+    allowInsecureImages: true
+
   imageRegistry: ""
   ## E.g.
   ## imagePullSecrets:
@@ -130,6 +135,10 @@ postgresql:
   ## To use an external database set this to false and configure the `externalDatabase.*` parameters
   ##
   enabled: true
+  image:
+    registry: docker.io
+    repository: library/postgres
+    tag: "15-bookworm"
   ## @param postgresql.architecture PostgreSQL architecture. Allowed values: `standalone` or `replication`
   ##
   architecture: standalone
@@ -150,6 +159,33 @@ postgresql:
   ## PostgreSQL Primary configuration
   ##
   primary:
+    args:
+      - -c
+      - config_file=/bitnami/postgresql/conf/postgresql.conf
+      - -c
+      - hba_file=/bitnami/postgresql/conf/pg_hba.conf
+    configuration: |
+      listen_addresses = '*'
+      port = '5432'
+      wal_level = 'replica'
+      fsync = 'on'
+      hot_standby = 'on'
+      log_connections = 'false'
+      log_disconnections = 'false'
+      log_hostname = 'false'
+      client_min_messages = 'error'
+      include_dir = 'conf.d'
+    pgHbaConfiguration: |
+      host     all             all             0.0.0.0/0               scram-sha-256
+      host     all             all             ::/0                    scram-sha-256
+      local    all             all                                     scram-sha-256
+      host     all             all        127.0.0.1/32                 scram-sha-256
+      host     all             all        ::1/128                      scram-sha-256
+    extraEnvVars:
+      - name: POSTGRES_DB
+        value: '{{ (include "postgresql.v1.database" .) }}'
+    containerSecurityContext:
+      readOnlyRootFilesystem: false
     ## PostgreSQL Primary Persistence parameters
     ## ref: https://kubernetes.io/docs/user-guide/persistent-volumes/
     ## @param postgresql.primary.persistence.enabled Enable persistence on PostgreSQL using PVC(s)
