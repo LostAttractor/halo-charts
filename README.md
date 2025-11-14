@@ -7,7 +7,7 @@
 ## 使用指引
 
 ```bash
-helm repo add bitnami https://charts.bitnami.com/bitnami
+helm repo add bitnami oci://registry-1.docker.io/bitnamicharts
 helm repo add halo https://halo-sigs.github.io/charts/
 helm repo update  # 从 chart 仓库中更新本地可用chart的信息
 helm install halo halo/halo
